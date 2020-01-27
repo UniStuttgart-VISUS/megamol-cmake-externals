@@ -203,14 +203,16 @@ function(add_external_project TARGET)
       list(APPEND INSTALL_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy "${SOURCE_BYPRODUCT}" "${TARGET_BYPRODUCT}")
     endforeach()
 
+    find_file(EXTERNAL_BUILD "External_build.cmake" ${CMAKE_MODULE_PATH})
+
     add_custom_target(${TARGET}_ext
       COMMAND ${CMAKE_COMMAND}
         -DCONFIG=$<CONFIG>
         -DINSTALL_DIR="${INSTALL_DIR}/$<CONFIG>"
         "-DINSTALL_COMMANDS=\"${INSTALL_COMMANDS}\""
         "-DCOMMANDS=\"${COMMANDS}\""
-        -P ${CMAKE_SOURCE_DIR}/cmake/External_build.cmake
-      DEPENDS ${CMAKE_SOURCE_DIR}/cmake/External_build.cmake
+        -P ${EXTERNAL_BUILD}
+      DEPENDS ${EXTERNAL_BUILD}
       WORKING_DIRECTORY "${BINARY_DIR}")
   else()
     external_set_typed_property(${TARGET} SHARED FALSE BOOL)
@@ -233,14 +235,16 @@ function(add_external_project TARGET)
       list(APPEND INSTALL_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy "${SOURCE_BYPRODUCT}" "${TARGET_BYPRODUCT}")
     endforeach()
 
+    find_file(EXTERNAL_BUILD "External_build.cmake" ${CMAKE_MODULE_PATH})
+
     add_custom_target(${TARGET}_ext
       COMMAND ${CMAKE_COMMAND}
         -DCONFIG=${CONFIG}
         -DINSTALL_DIR="${INSTALL_DIR}/${CONFIG}"
         "-DINSTALL_COMMANDS=\"${INSTALL_COMMANDS}\""
         "-DCOMMANDS=\"${COMMANDS}\""
-        -P ${CMAKE_SOURCE_DIR}/cmake/External_build.cmake
-      DEPENDS ${CMAKE_SOURCE_DIR}/cmake/External_build.cmake
+        -P ${EXTERNAL_BUILD}
+      DEPENDS ${EXTERNAL_BUILD}
       WORKING_DIRECTORY "${BINARY_DIR}"
       BYPRODUCTS ${BYPRODUCTS})
   endif()
