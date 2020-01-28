@@ -1,8 +1,10 @@
 include(CMakeParseArguments)
 
-include("${CMAKE_CURRENT_LIST_DIR}/External_arguments.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/External_properties.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/External_download.cmake")
+set(EXTERNAL_SCRIPTS_DIR "${CMAKE_CURRENT_LIST_DIR}")
+
+include("${EXTERNAL_SCRIPTS_DIR}/External_arguments.cmake")
+include("${EXTERNAL_SCRIPTS_DIR}/External_properties.cmake")
+include("${EXTERNAL_SCRIPTS_DIR}/External_download.cmake")
 
 #
 # Adds an external header-only project.
@@ -209,8 +211,8 @@ function(add_external_project TARGET)
         -DINSTALL_DIR="${INSTALL_DIR}/$<CONFIG>"
         "-DINSTALL_COMMANDS=\"${INSTALL_COMMANDS}\""
         "-DCOMMANDS=\"${COMMANDS}\""
-        -P "${CMAKE_CURRENT_LIST_DIR}/External_build.cmake"
-      DEPENDS "${CMAKE_CURRENT_LIST_DIR}/External_build.cmake"
+        -P "${EXTERNAL_SCRIPTS_DIR}/External_build.cmake"
+      DEPENDS "${EXTERNAL_SCRIPTS_DIR}/External_build.cmake"
       WORKING_DIRECTORY "${BINARY_DIR}")
   else()
     external_set_typed_property(${TARGET} SHARED FALSE BOOL)
@@ -239,8 +241,8 @@ function(add_external_project TARGET)
         -DINSTALL_DIR="${INSTALL_DIR}/${CONFIG}"
         "-DINSTALL_COMMANDS=\"${INSTALL_COMMANDS}\""
         "-DCOMMANDS=\"${COMMANDS}\""
-        -P "${CMAKE_CURRENT_LIST_DIR}/External_build.cmake"
-      DEPENDS "${CMAKE_CURRENT_LIST_DIR}/External_build.cmake"
+        -P "${EXTERNAL_SCRIPTS_DIR}/External_build.cmake"
+      DEPENDS "${EXTERNAL_SCRIPTS_DIR}/External_build.cmake"
       WORKING_DIRECTORY "${BINARY_DIR}"
       BYPRODUCTS ${BYPRODUCTS})
   endif()
