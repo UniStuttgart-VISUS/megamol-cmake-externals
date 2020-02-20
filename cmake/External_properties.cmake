@@ -46,7 +46,7 @@ endfunction()
 # external_set_property(<target> <property> <value>)
 #
 function(external_set_property TARGET PROPERTY VAR)
-  external_set_typed_property(${TARGET} ${PROPERTY} ${VAR} STRING)
+  external_set_typed_property(${TARGET} ${PROPERTY} "${VAR}" STRING)
 endfunction()
 
 

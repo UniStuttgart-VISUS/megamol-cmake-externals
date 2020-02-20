@@ -66,7 +66,7 @@ function(external_download TARGET)
     mark_as_advanced(FORCE FETCHCONTENT_UPDATES_DISCONNECTED_${ucName})
 
     # Set cached version
-    external_set_property(${TARGET} BUILD_TYPE ${CMAKE_BUILD_TYPE})
+    external_set_property(${TARGET} BUILD_TYPE "${CMAKE_BUILD_TYPE}")
     external_set_property(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY})
 
     if(args_GIT_TAG)
