@@ -268,19 +268,21 @@ function(add_external_project TARGET)
 
   add_dependencies(_ALL_EXTERNALS ${TARGET}_ext)
 
-  # Create install target for installing all shared external libraries
-  if(NOT TARGET _INSTALL_EXTERNALS)
-    add_custom_target(_INSTALL_EXTERNALS
-      DEPENDS _ALL_EXTERNALS
-      COMMAND ${CMAKE_COMMAND} -E copy_directory \"${INSTALL_DIR}/../../_deps_install\" \"${CMAKE_INSTALL_PREFIX}/\")
+  if (EXISTS "${INSTALL_DIR}/../../_deps_install")
+    # Create install target for installing all shared external libraries
+    if(NOT TARGET _INSTALL_EXTERNALS)
+      add_custom_target(_INSTALL_EXTERNALS
+        DEPENDS _ALL_EXTERNALS
+        COMMAND ${CMAKE_COMMAND} -E copy_directory \"${INSTALL_DIR}/../../_deps_install\" \"${CMAKE_INSTALL_PREFIX}/\")
 
-    set_target_properties(_INSTALL_EXTERNALS PROPERTIES FOLDER external)
-  endif()
+      set_target_properties(_INSTALL_EXTERNALS PROPERTIES FOLDER external)
+    endif()
 
-  if(WIN32)
-    install(DIRECTORY "${INSTALL_DIR}/../../_deps_install/bin" DESTINATION "${CMAKE_INSTALL_PREFIX}")
-  else()
-    install(DIRECTORY "${INSTALL_DIR}/../../_deps_install/lib" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    if(WIN32)
+      install(DIRECTORY "${INSTALL_DIR}/../../_deps_install/bin" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    else()
+      install(DIRECTORY "${INSTALL_DIR}/../../_deps_install/lib" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    endif()
   endif()
 endfunction(add_external_project)
 
