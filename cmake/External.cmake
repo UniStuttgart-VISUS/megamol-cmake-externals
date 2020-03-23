@@ -71,15 +71,17 @@ endfunction(add_external_headeronly_project)
 #     DEBUG_SUFFIX <suffix>
 #     RELWITHDEBINFO_SUFFIX <suffix>
 #     BUILD_BYPRODUCTS <output library files>
-#     CMAKE_ARGS <additional arguments>)
+#     CMAKE_ARGS <additional arguments>
+#     FOLDER_NAME <folder name>)
 #
 function(add_external_project TARGET)
   set(ARGS_OPTIONS SHARED)
-  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME)
   set(ARGS_MULT_VALUES CMAKE_ARGS PATCH_COMMAND DEPENDS COMMANDS BUILD_BYPRODUCTS)
   cmake_parse_arguments(args "${ARGS_OPTIONS}" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
   _argument_default(COMMANDS "")
+  _argument_default(FOLDER_NAME "external")
 
   # Download
   external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
@@ -248,7 +250,7 @@ function(add_external_project TARGET)
   endif()
 
   # Set external target properties
-  set_target_properties(${TARGET}_ext PROPERTIES FOLDER external)
+  set_target_properties(${TARGET}_ext PROPERTIES FOLDER ${args_FOLDER_NAME})
 
   if(args_DEPENDS)
     foreach(DEP IN LISTS args_DEPENDS)
@@ -263,7 +265,7 @@ function(add_external_project TARGET)
   # Create ALL target for building all external libraries at once
   if(NOT TARGET _ALL_EXTERNALS)
     add_custom_target(_ALL_EXTERNALS)
-    set_target_properties(_ALL_EXTERNALS PROPERTIES FOLDER external)
+    set_target_properties(_ALL_EXTERNALS PROPERTIES FOLDER ${args_FOLDER_NAME})
   endif()
 
   add_dependencies(_ALL_EXTERNALS ${TARGET}_ext)
@@ -275,7 +277,7 @@ function(add_external_project TARGET)
         DEPENDS _ALL_EXTERNALS
         COMMAND ${CMAKE_COMMAND} -E copy_directory \"${INSTALL_DIR}/../../_deps_install\" \"${CMAKE_INSTALL_PREFIX}/\")
 
-      set_target_properties(_INSTALL_EXTERNALS PROPERTIES FOLDER external)
+      set_target_properties(_INSTALL_EXTERNALS PROPERTIES FOLDER ${args_FOLDER_NAME})
     endif()
 
     if(WIN32)
