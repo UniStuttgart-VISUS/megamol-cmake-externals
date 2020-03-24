@@ -250,7 +250,7 @@ function(add_external_project TARGET)
   endif()
 
   # Set external target properties
-  set_target_properties(${TARGET}_ext PROPERTIES FOLDER ${args_FOLDER_NAME})
+  set_target_properties(${TARGET}_ext PROPERTIES FOLDER ${FOLDER_NAME})
 
   if(args_DEPENDS)
     foreach(DEP IN LISTS args_DEPENDS)
@@ -265,7 +265,7 @@ function(add_external_project TARGET)
   # Create ALL target for building all external libraries at once
   if(NOT TARGET _ALL_EXTERNALS)
     add_custom_target(_ALL_EXTERNALS)
-    set_target_properties(_ALL_EXTERNALS PROPERTIES FOLDER ${args_FOLDER_NAME})
+    set_target_properties(_ALL_EXTERNALS PROPERTIES FOLDER ${FOLDER_NAME})
   endif()
 
   add_dependencies(_ALL_EXTERNALS ${TARGET}_ext)
@@ -277,7 +277,7 @@ function(add_external_project TARGET)
         DEPENDS _ALL_EXTERNALS
         COMMAND ${CMAKE_COMMAND} -E copy_directory \"${INSTALL_DIR}/../../_deps_install\" \"${CMAKE_INSTALL_PREFIX}/\")
 
-      set_target_properties(_INSTALL_EXTERNALS PROPERTIES FOLDER ${args_FOLDER_NAME})
+      set_target_properties(_INSTALL_EXTERNALS PROPERTIES FOLDER ${FOLDER_NAME})
     endif()
 
     if(WIN32)
