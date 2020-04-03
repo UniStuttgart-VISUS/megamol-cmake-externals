@@ -270,8 +270,8 @@ function(add_external_project TARGET)
 
   add_dependencies(_ALL_EXTERNALS ${TARGET}_ext)
 
-  if (EXISTS "${INSTALL_DIR}/../../_deps_install")
-    # Create install target for installing all shared external libraries
+  # Create install target for installing all shared external libraries
+  if (args_SHARED)
     if(NOT TARGET _INSTALL_EXTERNALS)
       add_custom_target(_INSTALL_EXTERNALS
         DEPENDS _ALL_EXTERNALS
