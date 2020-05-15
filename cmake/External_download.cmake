@@ -47,7 +47,11 @@ function(external_download TARGET)
     list(APPEND REQUESTED_VERSION ${args_GIT_TAG})
   endif()
 
-  list(APPEND DOWNLOAD_ARGS "GIT_SHALLOW")
+  # Shallow clone does not work with commit hashes. Trying to detect hash by checking for strlen(tag) >= 40.
+  string(LENGTH "${args_GIT_TAG}" gitTagLength)
+  if(gitTagLength LESS 40)
+    list(APPEND DOWNLOAD_ARGS "GIT_SHALLOW;1")
+  endif()
 
   # Download immediately if necessary
   if(AVAILABLE_VERSION STREQUAL REQUESTED_VERSION)
