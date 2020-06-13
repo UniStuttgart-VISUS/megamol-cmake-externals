@@ -1,4 +1,5 @@
 include(CMakeParseArguments)
+include(GNUInstallDirs)
 
 set(EXTERNAL_SCRIPTS_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
@@ -283,7 +284,7 @@ function(add_external_project TARGET)
     if(WIN32)
       install(DIRECTORY "${INSTALL_DIR}/../../_deps_install/bin" DESTINATION "${CMAKE_INSTALL_PREFIX}")
     else()
-      install(DIRECTORY "${INSTALL_DIR}/../../_deps_install/lib" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+      install(DIRECTORY "${INSTALL_DIR}/../../_deps_install/${CMAKE_INSTALL_LIBDIR}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
     endif()
   endif()
 endfunction(add_external_project)
