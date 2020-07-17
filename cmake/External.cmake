@@ -46,7 +46,7 @@ function(add_external_headeronly_project TARGET)
     set(INCLUDE_DIRS "${SOURCE_DIR}")
   endif()
 
-  target_include_directories(${TARGET} INTERFACE ${INCLUDE_DIRS})
+  target_include_directories(${TARGET} SYSTEM INTERFACE ${INCLUDE_DIRS})
 
   # Add dependencies
   if(args_DEPENDS)
