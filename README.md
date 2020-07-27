@@ -2,7 +2,7 @@
 
 The system for including external dependencies in MegaMol is a process split into two phases, corresponding to CMake configuration and the build process.
 
-In the CMake configuration run, in which the external is first requested, it is downloaded from a git repository by providing a URL and tag (or commit hash), and configured in a separate process and folder. This is done to prevent global CMake options from clashing. In later CMake configuration runs, this configuration of the external dependencies is not re-run, except when manually requested by setting the appropriate CMake cache variable ```EXTERNAL_<NAME>_NEW_VERSION``` to ```TRUE```, or when the URL, tag or build type change.
+In the CMake configuration run, in which the external is first requested, it is either downloaded from a git repository by providing a URL and tag (or commit hash), or a local version within the ```externals``` folder of the main source directory is used. It is then configured in a separate process and folder to prevent global CMake options from clashing. In later CMake configuration runs, this configuration of the external dependencies is not re-run, except when manually requested by setting the appropriate CMake cache variable ```EXTERNAL_<NAME>_NEW_VERSION``` to ```TRUE```, or when the URL, tag or build type change.
 
 When building MegaMol, all external dependencies are only built if they have not been built before. Afterwards, only by setting ```EXTERNAL_<NAME>_NEW_VERSION``` to ```TRUE``` can the build process be triggered again. This ensures that they are not rebuilt unnecessarily, but built when their version change.
 
@@ -19,7 +19,7 @@ When building MegaMol, all external dependencies are only built if they have not
 
 ## Using external dependencies
 
-External dependencies are split into two categories: header-only libraries and libraries that have to be built into a static (```.a```/```.lib```) or dynamic (```.so```/```.dll```) library. Both kinds are defined in the ```CMakeExternals.cmake``` file in the MegaMol main directory and can be requested in the plugins using the command ```require_external(<NAME>)```. Generally, this command makes available the target ```<NAME>```, which provides all necessary information on where to find the library and include files.
+External dependencies are split into two categories: header-only libraries and libraries that have to be built into a static (```.a```/```.lib```) or dynamic (```.so```/```.dll```) library. Both kinds are defined in the ```CMakeExternals.cmake``` file in the ```externals``` folder in the MegaMol main directory and can be requested in the plugins using the command ```require_external(<NAME>)```. Generally, this command provides the target ```<NAME>```, which contains all necessary information on where to find the library and include files.
 
 ## Adding new external dependencies
 
@@ -31,8 +31,7 @@ For setting up a header-only library, the following command is used:
 
 ```
 add_external_headeronly_project(<NAME>
-   GIT_REPOSITORY <GIT_REPOSITORY>
-  [GIT_TAG <GIT_TAG>]
+   GIT_REPOSITORY <GIT_REPOSITORY> [GIT_TAG <GIT_TAG>] | SOURCE_DIR <SOURCE_DIR>
   [INCLUDE_DIR <INCLUDE_DIR>]
   [DEPENDS <DEPENDS>...])
 ```
@@ -42,6 +41,7 @@ add_external_headeronly_project(<NAME>
 | ```<NAME>```           | Target name, usually the official name of the library or its abbreviation. |
 | ```<GIT_REPOSITORY>``` | URL of the git repository. |
 | ```<GIT_TAG>```        | Tag or commit hash for getting a specific version, ensuring compatibility. Default behavior is to get the latest version. |
+| ```<SOURCE_DIR>```     | Relative path within the ```externals``` folder in the MegaMol source directory, where the ```CMakeLists.txt``` resides. |
 | ```<INCLUDE_DIR>```    | Relative directory where the include files can be found, usually ```include```. Defaults to the main source directory. |
 | ```<DEPENDS>```        | Targets this library depends on, if any. |
 
@@ -72,8 +72,7 @@ Similarly to the header-only libraries, the setup uses a command specifying the 
 
 ```
 add_external_project(<NAME> SHARED|STATIC
-   GIT_REPOSITORY <GIT_REPOSITORY>
-  [GIT_TAG <GIT_TAG>]
+   GIT_REPOSITORY <GIT_REPOSITORY> [GIT_TAG <GIT_TAG>] | SOURCE_DIR <SOURCE_DIR>
   [PATCH_COMMAND <PATCH_COMMAND>...]
   [CMAKE_ARGS <CMAKE_ARGUMENTS>...]
   BUILD_BYPRODUCTS <OUTPUT_LIBRARIES>...
@@ -88,6 +87,7 @@ add_external_project(<NAME> SHARED|STATIC
 | ```SHARED \| STATIC```        | Indicate to build a shared (```.so```/```.dll```) or static (```.a```/```.lib```) library. Shared libraries are always built as Release, static libraries according to user selection. |
 | ```<GIT_REPOSITORY>```        | URL of the git repository. |
 | ```<GIT_TAG>```               | Tag or commit hash for getting a specific version, ensuring compatibility. Default behavior is to get the latest version. |
+| ```<SOURCE_DIR>```            | Relative path within the ```externals``` folder in the MegaMol source directory, where the ```CMakeLists.txt``` resides. |
 | ```<PATCH_COMMAND>```         | Command that is run before the configuration step and is mostly used to apply patches or providing a modified ```CMakeLists.txt``` file. |
 | ```<CMAKE_ARGS>```            | Arguments that are passed to CMake for the configuration of the external library. |
 | ```<BUILD_BYPRODUCTS>```      | Specifies the output libraries, which are automatically installed if it is a dynamic library. This must include the import library on Windows systems. |
