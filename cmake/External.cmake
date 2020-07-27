@@ -12,8 +12,7 @@ include("${EXTERNAL_SCRIPTS_DIR}/External_download.cmake")
 #
 # add_external_headeronly_project(<target>
 #     DEPENDS <other targets>
-#     GIT_REPOSITORY <git url>
-#     GIT_TAG <tag or commit>
+#     GIT_REPOSITORY <git url> [GIT_TAG <tag or commit>] | SOURCE_DIR <source path>
 #     INCLUDE_DIR <include directories relative to the source directory
 #                  - omit for the source directory itself>)
 #
@@ -23,8 +22,14 @@ function(add_external_headeronly_project TARGET)
   set(ARGS_MULT_VALUES INCLUDE_DIR DEPENDS)
   cmake_parse_arguments(args "" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
-  # Download
-  external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+  # Download or get it from a local path
+  if(args_GIT_REPOSITORY)
+    external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+  elseif(args_SOURCE_DIR)
+    external_get(${TARGET} SOURCE_DIR ${args_SOURCE_DIR})
+  else()
+    message(FATAL_ERROR "No path or git repository declared as source")
+  endif()
 
   # Create interface library
   add_library(${TARGET} INTERFACE)
@@ -66,8 +71,7 @@ endfunction(add_external_headeronly_project)
 #
 # add_external_project(<target> [SHARED]
 #     DEPENDS <other targets>
-#     GIT_REPOSITORY <git url>
-#     GIT_TAG <tag or commit>
+#     GIT_REPOSITORY <git url> [GIT_TAG <tag or commit>] | SOURCE_DIR <source path>
 #     PATCH_COMMAND <command>
 #     DEBUG_SUFFIX <suffix>
 #     RELWITHDEBINFO_SUFFIX <suffix>
@@ -84,8 +88,14 @@ function(add_external_project TARGET)
   _argument_default(COMMANDS "")
   _argument_default(FOLDER_NAME "external")
 
-  # Download
-  external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+  # Download or get it from a local path
+  if(args_GIT_REPOSITORY)
+    external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+  elseif(args_SOURCE_DIR)
+    external_get(${TARGET} SOURCE_DIR ${args_SOURCE_DIR})
+  else()
+    message(FATAL_ERROR "No path or git repository declared as source")
+  endif()
 
   external_get_property(${TARGET} NEW_VERSION)
 
@@ -93,7 +103,7 @@ function(add_external_project TARGET)
   external_get_property(${TARGET} SOURCE_DIR)
   external_get_property(${TARGET} BINARY_DIR)
 
-  string(REPLACE "-src" "-install" INSTALL_DIR "${SOURCE_DIR}")
+  string(REPLACE "-src" "-install" INSTALL_DIR "${BINARY_DIR}")
   external_set_property(${TARGET} INSTALL_DIR "${INSTALL_DIR}")
   external_set_property(${TARGET} CONFIG_DIR "${INSTALL_DIR}")
 
