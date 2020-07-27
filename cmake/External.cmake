@@ -6,25 +6,31 @@ set(EXTERNAL_SCRIPTS_DIR "${CMAKE_CURRENT_LIST_DIR}")
 include("${EXTERNAL_SCRIPTS_DIR}/External_arguments.cmake")
 include("${EXTERNAL_SCRIPTS_DIR}/External_properties.cmake")
 include("${EXTERNAL_SCRIPTS_DIR}/External_download.cmake")
+include("${EXTERNAL_SCRIPTS_DIR}/External_get.cmake")
 
 #
 # Adds an external header-only project.
 #
 # add_external_headeronly_project(<target>
 #     DEPENDS <other targets>
-#     GIT_REPOSITORY <git url>
-#     GIT_TAG <tag or commit>
+#     GIT_REPOSITORY <git url> [GIT_TAG <tag or commit>] | SOURCE_DIR <source path>
 #     INCLUDE_DIR <include directories relative to the source directory
 #                  - omit for the source directory itself>)
 #
 function(add_external_headeronly_project TARGET)
   # Parse arguments
-  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG SOURCE_DIR)
   set(ARGS_MULT_VALUES INCLUDE_DIR DEPENDS)
   cmake_parse_arguments(args "" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
-  # Download
-  external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+  # Download or get it from a local path
+  if(args_GIT_REPOSITORY)
+    external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+  elseif(args_SOURCE_DIR)
+    external_get(${TARGET} SOURCE_DIR ${args_SOURCE_DIR})
+  else()
+    message(FATAL_ERROR "No path or git repository declared as source")
+  endif()
 
   # Create interface library
   add_library(${TARGET} INTERFACE)
@@ -66,8 +72,7 @@ endfunction(add_external_headeronly_project)
 #
 # add_external_project(<target> [SHARED]
 #     DEPENDS <other targets>
-#     GIT_REPOSITORY <git url>
-#     GIT_TAG <tag or commit>
+#     GIT_REPOSITORY <git url> [GIT_TAG <tag or commit>] | SOURCE_DIR <source path>
 #     PATCH_COMMAND <command>
 #     DEBUG_SUFFIX <suffix>
 #     RELWITHDEBINFO_SUFFIX <suffix>
@@ -77,15 +82,21 @@ endfunction(add_external_headeronly_project)
 #
 function(add_external_project TARGET)
   set(ARGS_OPTIONS SHARED)
-  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG SOURCE_DIR DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME)
   set(ARGS_MULT_VALUES CMAKE_ARGS PATCH_COMMAND DEPENDS COMMANDS BUILD_BYPRODUCTS)
   cmake_parse_arguments(args "${ARGS_OPTIONS}" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
   _argument_default(COMMANDS "")
   _argument_default(FOLDER_NAME "external")
 
-  # Download
-  external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+  # Download or get it from a local path
+  if(args_GIT_REPOSITORY)
+    external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+  elseif(args_SOURCE_DIR)
+    external_get(${TARGET} SOURCE_DIR ${args_SOURCE_DIR})
+  else()
+    message(FATAL_ERROR "No path or git repository declared as source")
+  endif()
 
   external_get_property(${TARGET} NEW_VERSION)
 
@@ -93,7 +104,7 @@ function(add_external_project TARGET)
   external_get_property(${TARGET} SOURCE_DIR)
   external_get_property(${TARGET} BINARY_DIR)
 
-  string(REPLACE "-src" "-install" INSTALL_DIR "${SOURCE_DIR}")
+  string(REPLACE "-build" "-install" INSTALL_DIR "${BINARY_DIR}")
   external_set_property(${TARGET} INSTALL_DIR "${INSTALL_DIR}")
   external_set_property(${TARGET} CONFIG_DIR "${INSTALL_DIR}")
 
