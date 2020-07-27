@@ -51,7 +51,9 @@ function(external_get TARGET)
     external_set_typed_property(${TARGET} NEW_VERSION TRUE BOOL)
 
     # Set source and binary directory
-    external_set_property(${TARGET} SOURCE_DIR "${SOURCE_DIR}")
+    external_set_property(${TARGET} SOURCE_DIR "${args_SOURCE_DIR}")
     external_set_property(${TARGET} BINARY_DIR "${CMAKE_BINARY_DIR}/_deps/${lcName}-build")
+
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/_deps/${lcName}-build")
   endif()
 endfunction()

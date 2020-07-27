@@ -6,6 +6,7 @@ set(EXTERNAL_SCRIPTS_DIR "${CMAKE_CURRENT_LIST_DIR}")
 include("${EXTERNAL_SCRIPTS_DIR}/External_arguments.cmake")
 include("${EXTERNAL_SCRIPTS_DIR}/External_properties.cmake")
 include("${EXTERNAL_SCRIPTS_DIR}/External_download.cmake")
+include("${EXTERNAL_SCRIPTS_DIR}/External_get.cmake")
 
 #
 # Adds an external header-only project.
@@ -18,7 +19,7 @@ include("${EXTERNAL_SCRIPTS_DIR}/External_download.cmake")
 #
 function(add_external_headeronly_project TARGET)
   # Parse arguments
-  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG SOURCE_DIR)
   set(ARGS_MULT_VALUES INCLUDE_DIR DEPENDS)
   cmake_parse_arguments(args "" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
@@ -81,7 +82,7 @@ endfunction(add_external_headeronly_project)
 #
 function(add_external_project TARGET)
   set(ARGS_OPTIONS SHARED)
-  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG SOURCE_DIR DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME)
   set(ARGS_MULT_VALUES CMAKE_ARGS PATCH_COMMAND DEPENDS COMMANDS BUILD_BYPRODUCTS)
   cmake_parse_arguments(args "${ARGS_OPTIONS}" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
