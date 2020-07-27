@@ -104,7 +104,7 @@ function(add_external_project TARGET)
   external_get_property(${TARGET} SOURCE_DIR)
   external_get_property(${TARGET} BINARY_DIR)
 
-  string(REGEX REPLACE "\-build(/|$)" "\-install" INSTALL_DIR "${BINARY_DIR}")
+  string(REGEX REPLACE "\-build(/$|$)" "\-install" INSTALL_DIR "${BINARY_DIR}")
   external_set_property(${TARGET} INSTALL_DIR "${INSTALL_DIR}")
   external_set_property(${TARGET} CONFIG_DIR "${INSTALL_DIR}")
 
