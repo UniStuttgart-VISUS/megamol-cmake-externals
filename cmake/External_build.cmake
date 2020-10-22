@@ -11,9 +11,16 @@ if(NOT EXISTS EXTERNAL_BUILT_${CONFIG})
     set(CMD_ECHO COMMAND_ECHO STDOUT)
   endif()
 
+  # Determine number of CPU cores
+  include(ProcessorCount)
+  ProcessorCount(NUM_CPU_CORES)
+  if(NUM_CPU_CORES EQUAL 0)
+    set(NUM_CPU_CORES 1)
+  endif()
+
   # Build external project
   execute_process(
-    COMMAND ${CMAKE_COMMAND} --build . --config ${CONFIG}
+    COMMAND ${CMAKE_COMMAND} --build . --parallel ${NUM_CPU_CORES} --config ${CONFIG}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     ${CMD_ECHO}
     RESULT_VARIABLE BUILD_RESULT)

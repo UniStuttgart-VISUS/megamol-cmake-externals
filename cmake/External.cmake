@@ -195,8 +195,15 @@ function(add_external_project TARGET)
 
     string(REPLACE "<INSTALL_DIR>" "${INSTALL_DIR}/../../_deps_install" COMMANDS "${COMMANDS}")
 
+    # Determine number of CPU cores
+    include(ProcessorCount)
+    ProcessorCount(NUM_CPU_CORES)
+    if(NUM_CPU_CORES EQUAL 0)
+      set(NUM_CPU_CORES 1)
+    endif()
+
     add_custom_command(OUTPUT "${BINARY_DIR}/EXTERNAL_BUILT"
-      COMMAND ${CMAKE_COMMAND} --build . --parallel --config Release
+      COMMAND ${CMAKE_COMMAND} --build . --parallel ${NUM_CPU_CORES} --config Release
       COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
       COMMAND ${CMAKE_COMMAND} -E make_directory \"${INSTALL_DIR}/../../_deps_install\"
       ${INSTALL_COMMANDS}
