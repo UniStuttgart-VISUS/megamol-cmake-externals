@@ -325,7 +325,8 @@ endfunction(add_external_project)
 #     DEBUG_SUFFIX <suffix>)
 #
 function(add_external_library TARGET)
-  set(ARGS_ONE_VALUE PROJECT LIBRARY IMPORT_LIBRARY INTERFACE_LIBRARIES DEBUG_SUFFIX)
+  set(ARGS_ONE_VALUE PROJECT LIBRARY IMPORT_LIBRARY DEBUG_SUFFIX)
+  set(ARGS_MULT_VALUES INTERFACE_LIBRARIES)
   cmake_parse_arguments(args "" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
   # Get default arguments
