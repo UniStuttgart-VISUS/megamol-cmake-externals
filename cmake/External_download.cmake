@@ -84,7 +84,11 @@ function(external_download TARGET)
     external_set_typed_property(${TARGET} NEW_VERSION TRUE BOOL)
 
     # Set source and binary directory
-    external_set_property(${TARGET} SOURCE_DIR "${${lcName}_SOURCE_DIR}")
+    if(args_SOURCE_SUBDIR) 
+      external_set_property(${TARGET} SOURCE_DIR "${${lcName}_SOURCE_DIR}/${args_SOURCE_SUBDIR}")
+    else()
+      external_set_property(${TARGET} SOURCE_DIR "${${lcName}_SOURCE_DIR}")
+    endif()
     external_set_property(${TARGET} BINARY_DIR "${${lcName}_BINARY_DIR}")
   endif()
 endfunction()

@@ -92,7 +92,11 @@ function(add_external_project TARGET)
 
   # Download or get it from a local path
   if(args_GIT_REPOSITORY)
-    external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+    if(args_SOURCE_SUBDIR)
+      external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG} SOURCE_SUBDIR ${args_SOURCE_SUBDIR})
+    else()
+      external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+    endif() 
   elseif(args_SOURCE_DIR)
     external_get(${TARGET} SOURCE_DIR ${args_SOURCE_DIR})
   else()
