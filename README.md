@@ -75,6 +75,7 @@ add_external_project(<NAME> SHARED|STATIC
    GIT_REPOSITORY <GIT_REPOSITORY> [GIT_TAG <GIT_TAG>] | SOURCE_DIR <SOURCE_DIR>
   [PATCH_COMMAND <PATCH_COMMAND>...]
   [CMAKE_ARGS <CMAKE_ARGUMENTS>...]
+  [SOURCE_SUBDIR <SUBDIRECTORY>...]
   BUILD_BYPRODUCTS <OUTPUT_LIBRARIES>...
   [COMMANDS <INSTALL_COMMANDS>...]
   [DEBUG_SUFFIX <DEBUG_SUFFIX>]
@@ -90,6 +91,7 @@ add_external_project(<NAME> SHARED|STATIC
 | ```<SOURCE_DIR>```            | Relative path within the ```externals``` folder in the MegaMol source directory, where the ```CMakeLists.txt``` resides. |
 | ```<PATCH_COMMAND>```         | Command that is run before the configuration step and is mostly used to apply patches or providing a modified ```CMakeLists.txt``` file. |
 | ```<CMAKE_ARGS>```            | Arguments that are passed to CMake for the configuration of the external library. |
+| ```<SOURCE_SUBDIR>``` | Name of the folder that contains the CMakeLists.txt file of the library. Only relevant if the targeted git repository has no CMakeLists.txt file at top level. |
 | ```<BUILD_BYPRODUCTS>```      | Specifies the output libraries, which are automatically installed if it is a dynamic library. This must include the import library on Windows systems. |
 | ```<COMMANDS>```              | Commands that are executed after the build process finished, allowing for custom install commands. |
 | ```<DEBUG_SUFFIX>```          | Specify a suffix for the debug version of the library. The position of this suffix has to be specified by providing ```<SUFFIX>``` in the library name. |
