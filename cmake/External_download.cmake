@@ -83,9 +83,6 @@ function(external_download TARGET)
 
     external_set_typed_property(${TARGET} NEW_VERSION TRUE BOOL)
 
-    message(WARNING " ${${lcName}_SOURCE_DIR}")
-    message(WARNING " ${${lcName}_BINARY_DIR}")
-
     # Set source and binary directory
     external_set_property(${TARGET} SOURCE_DIR "${${lcName}_SOURCE_DIR}")
     external_set_property(${TARGET} BINARY_DIR "${${lcName}_BINARY_DIR}")
