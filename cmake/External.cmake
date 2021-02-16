@@ -78,11 +78,12 @@ endfunction(add_external_headeronly_project)
 #     RELWITHDEBINFO_SUFFIX <suffix>
 #     BUILD_BYPRODUCTS <output library files>
 #     CMAKE_ARGS <additional arguments>
-#     FOLDER_NAME <folder name>)
+#     FOLDER_NAME <folder name>
+#     SOURCE_SUBDIR <subdirectory with CMakeLists.txt>)
 #
 function(add_external_project TARGET)
   set(ARGS_OPTIONS SHARED)
-  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG SOURCE_DIR DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG SOURCE_DIR DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME SOURCE_SUBDIR)
   set(ARGS_MULT_VALUES CMAKE_ARGS PATCH_COMMAND DEPENDS COMMANDS BUILD_BYPRODUCTS)
   cmake_parse_arguments(args "${ARGS_OPTIONS}" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
@@ -91,7 +92,11 @@ function(add_external_project TARGET)
 
   # Download or get it from a local path
   if(args_GIT_REPOSITORY)
-    external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+    if(args_SOURCE_SUBDIR)
+      external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG} SOURCE_SUBDIR ${args_SOURCE_SUBDIR})
+    else()
+      external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+    endif() 
   elseif(args_SOURCE_DIR)
     external_get(${TARGET} SOURCE_DIR ${args_SOURCE_DIR})
   else()

@@ -10,13 +10,14 @@ include(FetchContent)
 #
 function(external_download TARGET)
   # Parse arguments
-  set(ARGS_ONE_VALUE GIT_TAG GIT_REPOSITORY)
+  set(ARGS_ONE_VALUE GIT_TAG GIT_REPOSITORY SOURCE_SUBDIR)
   cmake_parse_arguments(args "" "${ARGS_ONE_VALUE}" "" ${ARGN})
 
   # Check for local version
   external_try_get_property(${TARGET} BUILD_TYPE)
   external_try_get_property(${TARGET} GIT_REPOSITORY)
   external_try_get_property(${TARGET} GIT_TAG)
+  external_try_get_property(${TARGET} SOURCE_SUBDIR)
 
   set(AVAILABLE_VERSION)
   if(DEFINED BUILD_TYPE)
@@ -27,6 +28,9 @@ function(external_download TARGET)
   endif()
   if(DEFINED GIT_TAG)
     list(APPEND AVAILABLE_VERSION ${GIT_TAG})
+  endif()
+  if(DEFINED SOURCE_SUBDIR)
+    list(APPEND AVAILABLE_VERSION ${SOURCE_SUBDIR})
   endif()
 
   # Check for requested version
@@ -80,7 +84,11 @@ function(external_download TARGET)
     external_set_typed_property(${TARGET} NEW_VERSION TRUE BOOL)
 
     # Set source and binary directory
-    external_set_property(${TARGET} SOURCE_DIR "${${lcName}_SOURCE_DIR}")
+    if(args_SOURCE_SUBDIR) 
+      external_set_property(${TARGET} SOURCE_DIR "${${lcName}_SOURCE_DIR}/${args_SOURCE_SUBDIR}")
+    else()
+      external_set_property(${TARGET} SOURCE_DIR "${${lcName}_SOURCE_DIR}")
+    endif()
     external_set_property(${TARGET} BINARY_DIR "${${lcName}_BINARY_DIR}")
   endif()
 endfunction()
