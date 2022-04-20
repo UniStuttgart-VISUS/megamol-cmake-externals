@@ -13,19 +13,19 @@ include("${EXTERNAL_SCRIPTS_DIR}/External_get.cmake")
 #
 # add_external_headeronly_project(<target>
 #     DEPENDS <other targets>
-#     GIT_REPOSITORY <git url> [GIT_TAG <tag or commit>] | URL <zip url> [URL_HASH <file hash>] | SOURCE_DIR <source path>
+#     GIT_REPOSITORY <git url> [GIT_TAG <tag or commit>] [GIT_CONFIG <config>] | URL <zip url> [URL_HASH <file hash>] | SOURCE_DIR <source path>
 #     INCLUDE_DIR <include directories relative to the source directory
 #                  - omit for the source directory itself>)
 #
 function(add_external_headeronly_project TARGET)
   # Parse arguments
-  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG URL URL_HASH SOURCE_DIR)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG GIT_CONFIG URL URL_HASH SOURCE_DIR)
   set(ARGS_MULT_VALUES INCLUDE_DIR DEPENDS)
   cmake_parse_arguments(args "" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
   # Download or get it from a local path
   if(args_GIT_REPOSITORY)
-    external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+    external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG} GIT_CONFIG ${args_GIT_CONFIG})
   elseif(args_URL)
     external_download(${TARGET} URL ${args_URL} URL_HASH ${args_URL_HASH})
   elseif(args_SOURCE_DIR)
@@ -74,7 +74,7 @@ endfunction(add_external_headeronly_project)
 #
 # add_external_project(<target> [SHARED]
 #     DEPENDS <other targets>
-#     GIT_REPOSITORY <git url> [GIT_TAG <tag or commit>] | URL <zip url> [URL_HASH <file hash>] | SOURCE_DIR <source path>
+#     GIT_REPOSITORY <git url> [GIT_TAG <tag or commit>] [GIT_CONFIG <config>] | URL <zip url> [URL_HASH <file hash>] | SOURCE_DIR <source path>
 #     PATCH_COMMAND <command>
 #     DEBUG_SUFFIX <suffix>
 #     RELWITHDEBINFO_SUFFIX <suffix>
@@ -85,7 +85,7 @@ endfunction(add_external_headeronly_project)
 #
 function(add_external_project TARGET)
   set(ARGS_OPTIONS SHARED)
-  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG URL URL_HASH SOURCE_DIR DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME SOURCE_SUBDIR)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG GIT_CONFIG URL URL_HASH SOURCE_DIR DEBUG_SUFFIX RELWITHDEBINFO_SUFFIX FOLDER_NAME SOURCE_SUBDIR)
   set(ARGS_MULT_VALUES CMAKE_ARGS PATCH_COMMAND DEPENDS COMMANDS BUILD_BYPRODUCTS)
   cmake_parse_arguments(args "${ARGS_OPTIONS}" "${ARGS_ONE_VALUE}" "${ARGS_MULT_VALUES}" ${ARGN})
 
@@ -95,9 +95,9 @@ function(add_external_project TARGET)
   # Download or get it from a local path
   if(args_GIT_REPOSITORY)
     if(args_SOURCE_SUBDIR)
-      external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG} SOURCE_SUBDIR ${args_SOURCE_SUBDIR})
+      external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG} GIT_CONFIG ${args_GIT_CONFIG} SOURCE_SUBDIR ${args_SOURCE_SUBDIR})
     else()
-      external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG})
+      external_download(${TARGET} GIT_REPOSITORY ${args_GIT_REPOSITORY} GIT_TAG ${args_GIT_TAG} GIT_CONFIG ${args_GIT_CONFIG})
     endif()
   elseif(args_URL)
       if(args_SOURCE_SUBDIR)

@@ -6,17 +6,19 @@ include(FetchContent)
 #
 # external_download(<target>
 #     GIT_REPOSITORY <git-url>
-#     GIT_TAG <tag or commit>)
+#     GIT_TAG <tag or commit>
+#     GIT_CONFIG <config>)
 #
 function(external_download TARGET)
   # Parse arguments
-  set(ARGS_ONE_VALUE GIT_TAG GIT_REPOSITORY URL URL_HASH SOURCE_SUBDIR)
+  set(ARGS_ONE_VALUE GIT_REPOSITORY GIT_TAG GIT_CONFIG URL URL_HASH SOURCE_SUBDIR)
   cmake_parse_arguments(args "" "${ARGS_ONE_VALUE}" "" ${ARGN})
 
   # Check for local version
   external_try_get_property(${TARGET} BUILD_TYPE)
   external_try_get_property(${TARGET} GIT_REPOSITORY)
   external_try_get_property(${TARGET} GIT_TAG)
+  external_try_get_property(${TARGET} GIT_CONFIG)
   external_try_get_property(${TARGET} URL)
   external_try_get_property(${TARGET} URL_HASH)
   external_try_get_property(${TARGET} SOURCE_SUBDIR)
@@ -30,6 +32,9 @@ function(external_download TARGET)
   endif()
   if(DEFINED GIT_TAG)
     list(APPEND AVAILABLE_VERSION ${GIT_TAG})
+  endif()
+  if(DEFINED GIT_CONFIG)
+    list(APPEND AVAILABLE_VERSION ${GIT_CONFIG})
   endif()
   if(DEFINED URL)
     list(APPEND AVAILABLE_VERSION ${URL})
@@ -54,6 +59,12 @@ function(external_download TARGET)
       set(MESSAGE "${MESSAGE}, tag '${args_GIT_TAG}'")
       list(APPEND DOWNLOAD_ARGS "GIT_TAG;${args_GIT_TAG}")
       list(APPEND REQUESTED_VERSION ${args_GIT_TAG})
+    endif()
+
+    if(args_GIT_CONFIG)
+      set(MESSAGE "${MESSAGE}, config '${args_GIT_CONFIG}'")
+      list(APPEND DOWNLOAD_ARGS "GIT_CONFIG;${args_GIT_CONFIG}")
+      list(APPEND REQUESTED_VERSION ${args_GIT_CONFIG})
     endif()
 
     # Shallow clone does not work with commit hashes. Trying to detect hash by checking for strlen(tag) >= 40.
@@ -100,6 +111,10 @@ function(external_download TARGET)
 
       if(args_GIT_TAG)
         external_set_property(${TARGET} GIT_TAG ${args_GIT_TAG})
+      endif()
+
+      if(args_GIT_CONFIG)
+        external_set_property(${TARGET} GIT_CONFIG ${args_GIT_CONFIG})
       endif()
     elseif(args_URL)
       external_set_property(${TARGET} URL ${args_URL})
